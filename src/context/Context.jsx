@@ -1,108 +1,66 @@
 import { createContext, useEffect, useState } from "react";
 
-export const typeError = [
-  "valueMissing",
-  "typeMismatch",
-  "tooShort",
-  "tooLong",
-  "patternMismatch",
-];
-
-export const messages = {
-  titulo: {
-    valueMissing: "El campo titulo no puede estar vacío",
-    tooShort: "El titulo tiene que ser al menos de 3 caracteres",
-  },
-  categoria: {
-    valueMissing: "El campo categoria no puede estar vacío",
-  },
-  imagen: {
-    valueMissing: "El campo imagen no puede estar vacío",
-    typeMismatch: "La imagen tiene que ser una URL valida",
-    patternMismatch:
-      "La Url de la imagen tiene que empezar asi https://i.ytimg.com/vi/ y debe povenir de Youtube",
-  },
-  video: {
-    valueMissing: "El campo video no puede estar vacío",
-    typeMismatch: "El video tiene que ser una URL valida",
-    patternMismatch:
-      "La Url del video debe povenir de Youtube con la siguiete estructura https://www.youtube.com/watch?v=",
-  },
-  descripcion: {
-    valueMissing: "El campo descripcion no puede estar vacío",
-    tooShort: "La descripcion tiene que ser al menos de 3 caracteres",
-    tooLong: "La descripcion alcanzo su logintud maxima",
-  },
-};
-
 export const GlobalContext = createContext();
 
 const GlobalContextProvider = ({ children }) => {
-  const [categories, setCategories] = useState([]);
   const [videos, setVideos] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
-  const [videoLink, setVideo] = useState("");
-  const [description, setDescription] = useState("");
-
+  const [videoLink, setVideoLink] = useState("");
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [popup, setPopup] = useState({ show: false, message: "", type: "" });
   const [errorMessages, setErrorMessages] = useState({});
+  const [formFields, setFormFields] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
 
-  // llamado Categorias desde API
+  // Cargar videos desde la API
   useEffect(() => {
-    fetch(
-      "https://my-json-server.typicode.com/EdwardbotA/aluraflix-database/categorias"
-    )
+    fetch("https://my-json-server.typicode.com/IlledNacu/videos-prueba/videos")
       .then((res) => res.json())
-      .then((data) => setCategories(data));
-  }, []);
-
-  // llamado videos desde API
-  useEffect(() => {
-    fetch(
-      "https://my-json-server.typicode.com/EdwardbotA/aluraflix-database/videos"
-    )
-      .then((res) => res.json())
-      .then((data) => setVideos(data));
+      .then((data) => {
+        setVideos(data);
+        // Extraer categorías únicas de los videos disponibles
+        const uniqueCategories = [...new Set(data.map((video) => video.categoria))];
+        setCategories(uniqueCategories);
+      })
+      .catch((error) => {
+        console.error("Error fetching videos:", error);
+        // Manejar errores de carga de videos
+      });
   }, []);
 
   const deleteVideo = (id) => {
-    fetch(
-      `https://my-json-server.typicode.com/EdwardbotA/aluraflix-database/videos/${id}`,
-      { method: "DELETE" }
-    )
+    fetch(`https://my-json-server.typicode.com/IlledNacu/videos-prueba/videos/${id}`, {
+      method: "DELETE",
+    })
       .then((res) => {
         if (!res.ok) {
           throw new Error("Error al eliminar el video");
         }
-
         return res.json();
       })
       .then(() => {
         const newVideos = videos.filter((video) => video.id !== id);
-
         setVideos(newVideos);
         setPopup({
           show: true,
-          message: "video eliminado con éxito",
+          message: "Video eliminado con éxito",
           type: "success",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
       })
-      .catch((err) => {
-        console.error("Error: ", err);
+      .catch((error) => {
+        console.error("Error: ", error);
         setPopup({
           show: true,
-          message: `Hubo un problema al eliminar el video: ${err}`,
+          message: `Hubo un problema al eliminar el video: ${error}`,
           type: "error",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
@@ -110,55 +68,43 @@ const GlobalContextProvider = ({ children }) => {
   };
 
   const updateVideoInfo = (data) => {
-    const { title, category, image, videoLink, description, id } = data;
-
+    const { title, category, image, videoLink, id } = data;
     const updatedVideo = {
       titulo: title,
-      Categoria: category,
-      linkImagenVideo: image,
-      linkVideo: videoLink,
-      descripcion: description,
+      categoria: category,
+      capa: image,
+      link: videoLink,
     };
 
-    fetch(
-      `https://my-json-server.typicode.com/EdwardbotA/aluraflix-database/videos/${id}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(updatedVideo),
-      }
-    )
-      .then((result) => result.json())
+    fetch(`https://my-json-server.typicode.com/IlledNacu/videos-prueba/videos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(updatedVideo),
+    })
+      .then((res) => res.json())
       .then((updatedVideoFromServer) => {
-        const newInfo = videos.map((video) => {
-          if (video.id === id) {
-            return updatedVideoFromServer;
-          }
-
-          return video;
-        });
-
-        setVideos(newInfo);
+        const updatedVideos = videos.map((video) =>
+          video.id === id ? updatedVideoFromServer : video
+        );
+        setVideos(updatedVideos);
         setPopup({
           show: true,
-          message: "video Actualizado con éxito",
+          message: "Video actualizado con éxito",
           type: "success",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
       })
-      .catch((err) => {
-        console.error("Error: ", err);
+      .catch((error) => {
+        console.error("Error: ", error);
         setPopup({
           show: true,
-          message: `Hubo un problema al actualizar el video: ${err}`,
+          message: `Hubo un problema al actualizar el video: ${error}`,
           type: "error",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
@@ -166,77 +112,81 @@ const GlobalContextProvider = ({ children }) => {
   };
 
   const createNewVideo = (data) => {
-    let newId = 1;
-
-    while (videos.some((video) => newId === video.id)) {
-      newId++;
-    }
-
-    const infoToSend = {
-      Categoria: data.category,
-      descripcion: data.description,
-      linkVideo: data.videoLink,
-      linkImagenVideo: data.image,
-      titulo: data.title,
-      id: newId,
+    const { category, image, videoLink, title } = data;
+    const newVideo = {
+      categoria: category,
+      capa: image,
+      link: videoLink,
+      titulo: title,
+      id: videos.length + 1, // Asumiendo que los ids son consecutivos
     };
 
-    fetch(
-      `https://my-json-server.typicode.com/EdwardbotA/aluraflix-database/videos`,
-      {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify(infoToSend),
-      }
-    )
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error al crear el video");
-        }
-
-        return res.json();
-      })
-      .then((newVideo) => {
-        setVideos([...videos, newVideo]);
+    fetch("https://my-json-server.typicode.com/IlledNacu/videos-prueba/videos", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(newVideo),
+    })
+      .then((res) => res.json())
+      .then((createdVideo) => {
+        setVideos([...videos, createdVideo]);
         setPopup({
           show: true,
-          message: `Se ha agregado con exito el video: ${newVideo.titulo}`,
+          message: `Se ha agregado con éxito el video: ${createdVideo.titulo}`,
           type: "success",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
       })
-      .catch((err) => {
-        console.error("Error:", err);
+      .catch((error) => {
+        console.error("Error: ", error);
         setPopup({
           show: true,
-          message: `Hubo un problema al agregar el video: ${err}`,
+          message: `Hubo un problema al agregar el video: ${error}`,
           type: "error",
         });
-
         setTimeout(() => {
           setPopup({ show: false, message: "", type: "" });
         }, 3000);
       });
   };
 
-  // verificacion de inputs
   const clearInputs = () => {
     setTitle("");
     setCategory("");
     setImage("");
-    setVideo("");
-    setDescription("");
+    setVideoLink("");
     setIsFormValid(false);
   };
 
+  const handleInputChange = (name, value) => {
+    switch (name) {
+      case "titulo":
+        setTitle(value);
+        break;
+      case "categoria":
+        setCategory(value);
+        break;
+      case "imagen":
+        setImage(value);
+        break;
+      case "video":
+        setVideoLink(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    const allValid = Object.values(formFields).every((field) => field.validity.valid);
+    setIsFormValid(allValid);
+  }, [formFields]);
+
   const verifyField = (field) => {
     let message = "";
-
     field.setCustomValidity("");
 
     typeError.forEach((error) => {
@@ -251,79 +201,6 @@ const GlobalContextProvider = ({ children }) => {
     }));
   };
 
-  const [formFields, setFormFields] = useState({});
-  const [isFormValid, setIsFormValid] = useState(false);
-
-  useEffect(() => {
-    const allValid = Object.values(formFields).every(
-      (field) => field.validity.valid
-    );
-    setIsFormValid(allValid);
-  }, [formFields]);
-
-  const handleInputChange = (name, value) => {
-    switch (name) {
-      case "titulo":
-        setTitle(value);
-        setFormFields({
-          ...formFields,
-          [name]: {
-            ...formFields[name],
-            value: value,
-            validity: document.querySelector(`[name=${name}]`).validity,
-          },
-        });
-        break;
-      case "categoria":
-        setCategory(value);
-        setFormFields({
-          ...formFields,
-          [name]: {
-            ...formFields[name],
-            value: value,
-            validity: document.querySelector(`[name=${name}]`).validity,
-          },
-        });
-        break;
-      case "imagen":
-        setImage(value);
-        setFormFields({
-          ...formFields,
-          [name]: {
-            ...formFields[name],
-            value: value,
-            validity: document.querySelector(`[name=${name}]`).validity,
-          },
-        });
-        break;
-      case "video":
-        setVideo(value);
-        setFormFields({
-          ...formFields,
-          [name]: {
-            ...formFields[name],
-            value: value,
-            validity: document.querySelector(`[name=${name}]`).validity,
-          },
-        });
-        break;
-      case "descripcion":
-        setDescription(value);
-        setFormFields({
-          ...formFields,
-          [name]: {
-            ...formFields[name],
-            value: value,
-            validity: document.querySelector(`[name=${name}]`).validity,
-          },
-        });
-        break;
-
-      default:
-        break;
-    }
-  };
-
   return (
     <GlobalContext.Provider
       value={{
@@ -331,7 +208,6 @@ const GlobalContextProvider = ({ children }) => {
         image,
         category,
         videoLink,
-        description,
         videos,
         categories,
         selectedVideo,

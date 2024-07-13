@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import CourseTitle from "../CourseTitle";
 import Card from "../Card";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../context/Context";
 
 const SectionStyles = styled.section`
@@ -13,45 +13,54 @@ const SectionStyles = styled.section`
   flex: 1;
   gap: 40px;
 
-  @media (width > 1024px) {
+  @media (min-width: 1024px) {
     align-items: center;
     padding: 62px;
   }
 `;
 
 const CourseContainer = styled.div`
-  width: 100%;
   display: flex;
-  overflow-x: auto;
+  flex-wrap: wrap;
   gap: 30px;
-  scrollbar-width: thin;
-  scrollbar-color: var(--main-color-blue) var(--scrollbar-color);
-  padding-bottom: 12px;
-
-  @media (width > 1024px) {
-    align-self: flex-start;
-  }
 `;
 
-const CourseSection = ({ category }) => {
+const CourseSection = () => {
   const { videos } = useContext(GlobalContext);
-  const { color, nombre } = category;
+  const [groupedVideos, setGroupedVideos] = useState([]);
+
+  useEffect(() => {
+    if (videos.length > 0) {
+      const categories = videos.reduce((acc, video) => {
+        const categoryExists = acc.find((item) => item.category === video.categoria);
+        if (!categoryExists) {
+          acc.push({
+            category: video.categoria,
+            videos: [video],
+          });
+        } else {
+          categoryExists.videos.push(video);
+        }
+        return acc;
+      }, []);
+
+      setGroupedVideos(categories);
+    }
+  }, [videos]);
 
   return (
-    <>
-      {videos.length > 0 && (
-        <SectionStyles>
-          <CourseTitle color={color}>{nombre}</CourseTitle>
+    <SectionStyles>
+      {groupedVideos.map((group) => (
+        <div key={group.category}>
+          <CourseTitle color={group.videos[0].color}>{group.category}</CourseTitle>
           <CourseContainer>
-            {videos
-              .filter((video) => video.Categoria === nombre)
-              .map((video) => (
-                <Card color={color} key={video.id} video={video} />
-              ))}
+            {group.videos.map((video) => (
+              <Card key={video.id} color={video.color} video={video} />
+            ))}
           </CourseContainer>
-        </SectionStyles>
-      )}
-    </>
+        </div>
+      ))}
+    </SectionStyles>
   );
 };
 

@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-family: "Source sans Pro", sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --main-background-black: #191919;
+  --main-gray: #262626;
+  --secondary-background-dark-blue: #030910;
+  --main-color-blue: #2271d1;
+  --scrollbar-color: #2271d12b;
+  --button-shadow-color: #0b223f;
+  --shadow-color: #03122fc8;
+  --background-modal: #03122f;
+  --secondary-white: #ffffff;
+	--error-color: #E53935;
+  font-size: 62.5%;
+}

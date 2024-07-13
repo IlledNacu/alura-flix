@@ -1,0 +1,54 @@
+{
+    "videos": [
+        {
+            "id": 1,
+            "titulo": "Qué Significa Pensar Como Programador",
+            "capa": "https://i.ytimg.com/vi/ov7vA5HFe6w/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLC2B6wphxS2RA7tQcOphXdyi6WF4g",
+            "categoria": "Frontend",
+            "link": "https://www.youtube.com/watch?v=ov7vA5HFe6w"
+        },
+        {
+            "id": 2,
+            "titulo": "Cuándo usar let, var y const?",
+            "capa": "https://i.ytimg.com/vi/PztCEdIJITY/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD2qK3Zjt_Y4Di7_0Hv5sJjrvkosQ",
+            "categoria": "Frontend",
+            "link": "https://www.youtube.com/watch?v=PztCEdIJITY"
+        },
+        {
+            "id": 3,
+            "titulo": "¿Qué es Javascript?",
+            "capa": "https://i.ytimg.com/vi/GJfOSoaXk4s/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAKpxz6vMwTw26HQyprrrwHFadQ2g",
+            "categoria": "Frontend",
+            "link": "https://www.youtube.com/watch?v=GJfOSoaXk4s"
+        },
+        {
+            "id": 4,
+            "titulo": "Spring Framework. ¿Qué es ?",
+            "capa": "https://i.ytimg.com/vi/t-iqt1b2qqk/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLAjy-AQhBnJTTm-AJ0IMcn_8YKWrg",
+            "categoria": "Backend",
+            "link": "https://www.youtube.com/watch?v=t-iqt1b2qqk"
+        },
+        {
+            "id": 5,
+            "titulo": "¿Qué son las Soft Skills?",
+            "capa": "https://i.ytimg.com/vi/vhwspfvI52k/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLA1wbrXCzeQWVWde43lyuTxyV7yoA",
+            "categoria": "Innovación y gestión",
+            "link": "https://www.youtube.com/watch?v=vhwspfvI52k"
+        },
+        {
+            "id": 6,
+            "titulo": "7 Soft Skills más deseadas por las empresas",
+            "capa": "https://i.ytimg.com/vi/YhR7Zp8NUzE/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCW8WXDfotlG3aB2F1Fa5G-XRmmjw",
+            "categoria": "Innovación y gestión",
+            "link": "https://www.youtube.com/watch?v=YhR7Zp8NUzE"
+        }
+        ,
+        {
+            "id": 7,
+            "titulo": "7 Soft Skills más deseadas por las empresas",
+            "capa": "https://i.ytimg.com/vi/YhR7Zp8NUzE/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCW8WXDfotlG3aB2F1Fa5G-XRmmjw",
+            "categoria": "Data Science",
+            "link": "https://www.youtube.com/watch?v=YhR7Zp8NUzE"
+        }
+    ]
+}

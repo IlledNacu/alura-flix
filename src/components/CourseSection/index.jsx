@@ -26,36 +26,32 @@ const CourseContainer = styled.div`
 `;
 
 const CourseSection = () => {
-  const { videos } = useContext(GlobalContext);
+  const { videos, categories } = useContext(GlobalContext);
   const [groupedVideos, setGroupedVideos] = useState([]);
 
   useEffect(() => {
-    if (videos.length > 0) {
-      const categories = videos.reduce((acc, video) => {
-        const categoryExists = acc.find((item) => item.category === video.categoria);
-        if (!categoryExists) {
-          acc.push({
-            category: video.categoria,
-            videos: [video],
-          });
-        } else {
-          categoryExists.videos.push(video);
-        }
-        return acc;
-      }, []);
+    if (videos.length > 0 && categories.length > 0) {
+      const grouped = categories.map((category) => {
+        const videosInCategory = videos.filter((video) => video.categoria === category.titulo);
+        return {
+          category: category.titulo,
+          color: category.color,
+          videos: videosInCategory,
+        };
+      });
 
-      setGroupedVideos(categories);
+      setGroupedVideos(grouped);
     }
-  }, [videos]);
+  }, [videos, categories]);
 
   return (
     <SectionStyles>
       {groupedVideos.map((group) => (
         <div key={group.category}>
-          <CourseTitle color={group.videos[0].color}>{group.category}</CourseTitle>
+          <CourseTitle color={group.color}>{group.category}</CourseTitle>
           <CourseContainer>
             {group.videos.map((video) => (
-              <Card key={video.id} color={video.color} video={video} />
+              <Card key={video.id} color={group.color} video={video} />
             ))}
           </CourseContainer>
         </div>

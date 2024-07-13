@@ -1,9 +1,9 @@
+import { useContext, useEffect } from "react";
 import styled from "styled-components";
 import closeBtn from "./cerrar.png";
 import FormInput from "../FormInput";
 import OptionInput from "../OptionInput";
 import ActionBtn from "../ActionBtn";
-import { useContext, useEffect } from "react";
 import { GlobalContext } from "../../context/Context";
 
 const Overlay = styled.div`
@@ -27,7 +27,7 @@ const DialogStyles = styled.dialog`
   padding: 60px 12px;
   background-color: var(--background-modal);
 
-  @media (width > 1024px) {
+  @media (min-width: 1024px) {
     width: 70%;
     top: 50px;
     padding: 60px 140px;
@@ -49,7 +49,7 @@ const TitleStyles = styled.legend`
   font-weight: bold;
   text-transform: uppercase;
 
-  @media (width > 1024px) {
+  @media (min-width: 1024px) {
     font-size: 6rem;
     align-self: flex-start;
   }
@@ -69,17 +69,17 @@ const ButtonClose = styled.button`
     width: 100%;
   }
 
-  @media (width > 1024px) {
+  @media (min-width: 1024px) {
     right: -125px;
   }
 `;
 
-export const ButtonContainer = styled.div`
+const ButtonContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
 
-  @media (width > 1024px) {
+  @media (min-width: 1024px) {
     flex-direction: row;
     justify-content: space-evenly;
     width: 100%;
@@ -89,10 +89,7 @@ export const ButtonContainer = styled.div`
 const Modal = ({ video, closeModal }) => {
   const {
     title,
-    image,
     category,
-    videoLink,
-    description,
     handleInputChange,
     updateVideoInfo,
     clearInputs,
@@ -102,19 +99,21 @@ const Modal = ({ video, closeModal }) => {
     const getInitialValue = () => {
       if (video) {
         handleInputChange("titulo", video.titulo || "");
-        handleInputChange("categoria", video.Categoria || "");
-        handleInputChange("imagen", video.linkImagenVideo || "");
-        handleInputChange("video", video.linkVideo || "");
-        handleInputChange("descripcion", video.descripcion || "");
+        handleInputChange("categoria", video.categoria || "");
       }
     };
 
     getInitialValue();
-  }, [video]);
+  }, [video, handleInputChange]);
 
   const handleSubmit = (e) => {
+    e.preventDefault();
     let id = video.id;
-    let info = { title, image, category, videoLink, description, id };
+    let info = {
+      title,
+      category,
+      id,
+    };
 
     updateVideoInfo(info);
     closeModal();
@@ -126,7 +125,7 @@ const Modal = ({ video, closeModal }) => {
         <>
           <Overlay />
           <DialogStyles open={!!video}>
-            <FormStyles method="dialog" onSubmit={handleSubmit}>
+            <FormStyles onSubmit={handleSubmit}>
               <ButtonClose type="button" onClick={closeModal}>
                 <img src={closeBtn} alt="Cerrar" />
               </ButtonClose>
@@ -138,7 +137,7 @@ const Modal = ({ video, closeModal }) => {
                 from="modal"
                 name="titulo"
                 minlength="3"
-                title="tienes que tener al menos 3 caracteres para ser valido"
+                title="Tiene que tener al menos 3 caracteres para ser válido"
               >
                 Título
               </FormInput>
@@ -148,47 +147,15 @@ const Modal = ({ video, closeModal }) => {
                 from="modal"
                 name="categoria"
               >
-                Categoria
+                Categoría
               </OptionInput>
-              <FormInput
-                inputValue={image}
-                placeholder="link de la imagen"
-                type="url"
-                from="modal"
-                name="imagen"
-                pattern="^https:\/\/i\.ytimg\.com\/vi\/.*$"
-                title="Por favor coloca una Url de youtube"
-              >
-                Imagen
-              </FormInput>
-              <FormInput
-                inputValue={videoLink}
-                placeholder="Link del video"
-                type="url"
-                from="modal"
-                name="video"
-                pattern="^https:\/\/www\.youtube\.com\/watch\?v=.*$"
-                title="Por favor coloca una Url de youtube"
-              >
-                Video
-              </FormInput>
-              <FormInput
-                inputValue={description}
-                big
-                placeholder="¿De qué se trata este vídeo?"
-                from="modal"
-                name="descripcion"
-                minlength="3"
-                maxlength="6000"
-              >
-                Descripción
-              </FormInput>
+              
               <ButtonContainer>
                 <ActionBtn type="submit" main>
                   Guardar
                 </ActionBtn>
                 <ActionBtn action={clearInputs} type="button">
-                  limpiar
+                  Limpiar
                 </ActionBtn>
               </ButtonContainer>
             </FormStyles>

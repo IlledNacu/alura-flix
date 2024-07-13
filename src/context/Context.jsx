@@ -5,7 +5,6 @@ export const GlobalContext = createContext();
 const GlobalContextProvider = ({ children }) => {
   const [videos, setVideos] = useState([]);
   const [categories, setCategories] = useState([]);
-
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
@@ -28,7 +27,20 @@ const GlobalContextProvider = ({ children }) => {
       })
       .catch((error) => {
         console.error("Error fetching videos:", error);
-        // Manejar errores de carga de videos
+        // No se maneja específicamente el error de carga de videos aquí
+      });
+  }, []);
+
+  // Cargar categorías desde la API
+  useEffect(() => {
+    fetch("https://my-json-server.typicode.com/IlledNacu/videos-prueba/categorias")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+        // No se maneja específicamente el error de carga de categorías aquí
       });
   }, []);
 
@@ -189,12 +201,7 @@ const GlobalContextProvider = ({ children }) => {
     let message = "";
     field.setCustomValidity("");
 
-    typeError.forEach((error) => {
-      if (field.validity[error]) {
-        message = messages[field.name][error] || "Campo invalido";
-      }
-    });
-
+    // Aquí podrías agregar validaciones personalizadas si es necesario en el futuro
     setErrorMessages((prevErrors) => ({
       ...prevErrors,
       [field.name]: message,

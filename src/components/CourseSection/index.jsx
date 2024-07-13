@@ -26,36 +26,48 @@ const CourseContainer = styled.div`
 `;
 
 const CourseSection = () => {
-  const { videos } = useContext(GlobalContext);
+  const { videos, categories } = useContext(GlobalContext);
   const [groupedVideos, setGroupedVideos] = useState([]);
 
   useEffect(() => {
-    if (videos.length > 0) {
-      const categories = videos.reduce((acc, video) => {
-        const categoryExists = acc.find((item) => item.category === video.categoria);
-        if (!categoryExists) {
-          acc.push({
-            category: video.categoria,
-            videos: [video],
-          });
-        } else {
-          categoryExists.videos.push(video);
-        }
-        return acc;
-      }, []);
+    if (videos.length > 0 && categories.length > 0) {
+      // Utilizamos un objeto Set para mantener categorías únicas
+      const uniqueCategories = new Set();
 
-      setGroupedVideos(categories);
+      // Filtramos los videos y añadimos las categorías únicas al Set
+      videos.forEach((video) => {
+        if (categories.find((category) => category.titulo === video.categoria)) {
+          uniqueCategories.add(video.categoria);
+        }
+      });
+
+      // Convertimos el Set de categorías únicas de nuevo a un array
+      const uniqueCategoriesArray = Array.from(uniqueCategories);
+
+      // Creamos un objeto con las categorías y sus videos correspondientes
+      const grouped = uniqueCategoriesArray.map((category) => {
+        const videosInCategory = videos.filter((video) => video.categoria === category);
+        const categoryInfo = categories.find((cat) => cat.titulo === category);
+        return {
+          category: category,
+          color: categoryInfo.color,
+          videos: videosInCategory,
+        };
+      });
+
+      // Establecemos el estado con las categorías agrupadas y sus videos
+      setGroupedVideos(grouped);
     }
-  }, [videos]);
+  }, [videos, categories]);
 
   return (
     <SectionStyles>
       {groupedVideos.map((group) => (
         <div key={group.category}>
-          <CourseTitle color={group.videos[0].color}>{group.category}</CourseTitle>
+          <CourseTitle color={group.color}>{group.category}</CourseTitle>
           <CourseContainer>
             {group.videos.map((video) => (
-              <Card key={video.id} color={video.color} video={video} />
+              <Card key={video.id} color={group.color} video={video} />
             ))}
           </CourseContainer>
         </div>

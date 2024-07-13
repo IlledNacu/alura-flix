@@ -80,8 +80,8 @@ const OptionInput = ({
           {placeholder}
         </option>
         {categories.map((category) => (
-          <option value={category.nombre} key={category.id}>
-            {category.nombre}
+          <option value={category.titulo} key={category.id}>
+            {category.titulo}
           </option>
         ))}
       </InputStyles>

@@ -5,7 +5,6 @@ export const GlobalContext = createContext();
 const GlobalContextProvider = ({ children }) => {
   const [videos, setVideos] = useState([]);
   const [categories, setCategories] = useState([]);
-
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [image, setImage] = useState("");
@@ -29,6 +28,19 @@ const GlobalContextProvider = ({ children }) => {
       .catch((error) => {
         console.error("Error fetching videos:", error);
         // Manejar errores de carga de videos
+      });
+  }, []);
+
+  // Cargar categorías desde la API
+  useEffect(() => {
+    fetch("https://my-json-server.typicode.com/IlledNacu/videos-prueba/categorias")
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching categories:", error);
+        // Manejar errores de carga de categorías
       });
   }, []);
 
